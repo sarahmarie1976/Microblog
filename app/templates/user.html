@@ -7,7 +7,7 @@
                 <img src="{{ user.avatar(128) }}" style="border-radius: 50%; max-width: 128px; max-height: 128px; width: auto; height: auto;">
             </td>
             <td>
-                <h1>Hello {{ user.username }}!</h1>
+                <h1>{{ user.username }}'s posts!</h1>
                 {% if user.about_me %}
                 <div style="max-width: 400px;">
                     <p>{{ user.about_me }}</p>
@@ -41,4 +41,17 @@
     {% for post in posts %}
         {% include '_post.html' %}
     {% endfor %}
+    <div>
+        {% if prev_url %}
+        <a href="{{ prev_url }}">Newer posts</a>
+        {% else %}
+        <span style="color: grey;">Newer posts</span>
+        {% endif %}
+        |
+        {% if next_url %}
+        <a href="{{ next_url }}">Older posts</a>
+        {% else %}
+        <span style="color: grey;">Older posts</span>
+        {% endif %}
+    </div>
 {% endblock %}
