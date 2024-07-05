@@ -7,19 +7,21 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Load environment variables from .env
+load_dotenv()
 
 app = Flask(__name__)
-app.config.from_object(Config)  # Load config from Config class
+app.config.from_object(Config)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-CORS(app)
 login = LoginManager(app)
-
-@login.user_loader
-def load_user(id):
-    return db.session.get(User, int(id))
-
+login.login_view = 'login'
+CORS(app)
 
 from app import routes, models
+
+@login.user_loader
+def load_user(user_id):
+    return models.User.query.get(int(user_id))
+
+
