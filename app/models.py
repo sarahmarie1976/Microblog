@@ -5,8 +5,9 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db, login
-
+from time import time
+import jwt
+from app import db, login, app
 
 followers = sa.Table(
     'followers',
@@ -30,12 +31,12 @@ class User(UserMixin, db.Model):
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
-    
+
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers, primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         back_populates='followers')
-    
+
     followers: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers, primaryjoin=(followers.c.followed_id == id),
         secondaryjoin=(followers.c.follower_id == id),
@@ -53,7 +54,7 @@ class User(UserMixin, db.Model):
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
-    
+
     def follow(self, user):
         if not self.is_following(user):
             self.following.add(user)
@@ -91,11 +92,26 @@ class User(UserMixin, db.Model):
             .order_by(Post.timestamp.desc())
         )
 
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except Exception:
+            return
+        return db.session.get(User, id)
+    
+    def formatted_username(self):
+        return self.username.capitalize()
 
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
-
 
 class Post(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -109,4 +125,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-    
