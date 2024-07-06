@@ -1,8 +1,7 @@
 import os
-from flask import send_from_directory
+from flask import send_from_directory, url_for, render_template, flash, redirect, request
 from datetime import datetime, timezone
 from urllib.parse import urlsplit
-from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.utils import secure_filename
 import sqlalchemy as sa
@@ -43,7 +42,8 @@ def index():
     prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
     return render_template('index.html', title='Home', form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url, user=current_user)
+                           prev_url=prev_url)
+
 @app.route('/explore')
 @login_required
 def explore():
@@ -77,7 +77,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -107,7 +107,6 @@ def reset_password_request():
         return redirect(url_for('login'))
     return render_template('reset_password_request.html',
                            title='Reset Password', form=form)
-
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
