@@ -1,14 +1,16 @@
+import logging
+from logging.handlers import SMTPHandler, RotatingFileHandler
+import os
 from flask import Flask
-from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-from logging.handlers import SMTPHandler, RotatingFileHandler
+from flask_mail import Mail
+from config import Config
+
+
 from flask_cors import CORS
 from dotenv import load_dotenv
-import os
-import logging
-
 
 load_dotenv()
 
@@ -19,7 +21,11 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
+mail = Mail(app)
+
 CORS(app)
+
+
 
 from app import routes, models, errors
 

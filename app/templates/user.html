@@ -7,7 +7,7 @@
                 <img src="{{ user.avatar(128) }}" style="border-radius: 50%; max-width: 128px; max-height: 128px; width: auto; height: auto;">
             </td>
             <td>
-                <h1>{{ user.username }}'s posts!</h1>
+                <h1>{{ user.formatted_username() }}'s posts!</h1>
                 {% if user.about_me %}
                 <div style="max-width: 400px;">
                     <p>{{ user.about_me }}</p>
