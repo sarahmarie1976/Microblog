@@ -8,7 +8,7 @@
                         <a href="{{ url_for('user', username=post.author.username) }}" class="fw-bold text-decoration-none">
                             {{ post.author.formatted_username() }}
                         </a>
-                        <span class="ms-1">says:</span>
+                        <span class="ms-1"> {{ moment(post.timestamp).fromNow() }} </span>
                     </div>
                     <span class="text-muted">{{ post.body }}</span>
                 </div>
