@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <table>
-        <tr valign="top">
-            <td style="padding-right: 20px;">
-                <img src="{{ user.avatar(128) }}" style="border-radius: 50%; max-width: 128px; max-height: 128px; width: auto; height: auto;">
-            </td>
-            <td>
+    <div class="text-center">
+        <div class="d-flex justify-content-center">
+            <div class="me-3">
+                <img src="{{ user.avatar(128) }}" class="rounded-circle mb-3" style="max-width: 128px; max-height: 128px;">
+            </div>
+            <div>
                 <h1>{{ user.formatted_username() }}'s posts!</h1>
                 {% if user.about_me %}
-                <div style="max-width: 400px;">
-                    <p>{{ user.about_me }}</p>
+                <div class="mb-3">
+                    <p class="text-center">{{ user.about_me }}</p>
                 </div>
                 {% endif %}
                 {% if user.last_seen %}
-                <p>Last seen on: {{ user.last_seen }}</p>
+                <p>Last seen on: {{ user.last_seen.strftime('%B %d, %Y at %I:%M %p') }}</p>
                 {% endif %}
                 <p>{{ user.followers_count() }} followers, {{ user.following_count() }} following.</p>
                 {% if user == current_user %}
@@ -23,35 +22,35 @@
                 <p>
                     <form action="{{ url_for('follow', username=user.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value='Follow') }}
+                        {{ form.submit(class='btn btn-primary', value='Follow') }}
                     </form>
                 </p>
                 {% else %}
                 <p>
                     <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value='Unfollow') }}
+                        {{ form.submit(class='btn btn-danger', value='Unfollow') }}
                     </form>
                 </p>
                 {% endif %}
-            </td>
-        </tr>
-    </table>
-    <hr>
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
-    <div>
-        {% if prev_url %}
-        <a href="{{ prev_url }}">Newer posts</a>
-        {% else %}
-        <span style="color: grey;">Newer posts</span>
-        {% endif %}
-        |
-        {% if next_url %}
-        <a href="{{ next_url }}">Older posts</a>
-        {% else %}
-        <span style="color: grey;">Older posts</span>
-        {% endif %}
+            </div>
+        </div>
+        <hr>
+        {% for post in posts %}
+            {% include '_post.html' %}
+        {% endfor %}
+        <div>
+            {% if prev_url %}
+            <a href="{{ prev_url }}" class="btn btn-secondary">Newer posts</a>
+            {% else %}
+            <span class="btn btn-secondary disabled">Newer posts</span>
+            {% endif %}
+            |
+            {% if next_url %}
+            <a href="{{ next_url }}" class="btn btn-secondary">Older posts</a>
+            {% else %}
+            <span class="btn btn-secondary disabled">Older posts</span>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}

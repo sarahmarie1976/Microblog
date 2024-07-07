@@ -1,13 +1,18 @@
-<table>
-    <tr valign="top">
-        <td>
-            <img src="{{ post.author.avatar(36) }}" style="border-radius: 50%; max-width: 36px; max-height: 36px; width: auto; height: auto;">
-        </td>
-        <td>
-            <a href="{{ url_for('user', username=post.author.username) }}">
-                {{ post.author.formatted_username() }}
-            </a> says:<br>
-            {{ post.body }}
-        </td>
-    </tr>
-</table>
+<div class="d-flex justify-content-center mb-4">
+    <div class="card w-75">
+        <div class="card-body">
+            <div class="d-flex align-items-start">
+                <img src="{{ post.author.avatar(36) }}" class="rounded-circle me-3" style="max-width: 36px; max-height: 36px;">
+                <div>
+                    <div class="d-flex align-items-center">
+                        <a href="{{ url_for('user', username=post.author.username) }}" class="fw-bold text-decoration-none">
+                            {{ post.author.formatted_username() }}
+                        </a>
+                        <span class="ms-1">says:</span>
+                    </div>
+                    <span class="text-muted">{{ post.body }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
